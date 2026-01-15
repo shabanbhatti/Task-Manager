@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager_project/Models/task_model_class.dart';
-import 'package:task_manager_project/Pages/profile%20page/controllers/profile_noti_switch_riverpod.dart';
 import 'package:task_manager_project/Pages/update%20task%20page/widgets/update_btn_widget.dart';
 import 'package:task_manager_project/Pages/update%20task%20page/widgets/update_task_sliverappbar_widget.dart';
 import 'package:task_manager_project/controllers/date%20time%20controllers/date_riverpod.dart';
@@ -52,12 +51,11 @@ class _AddTaskState extends ConsumerState<UpdateTask>
     descrptionController.text = widget.tasks.description.toString();
     Future.microtask(() {
       ref
-          .read(selectionBtnProvider.notifier).onInitialState(widget.tasks.importance??'');
-          ref.read(dateProvider.notifier).foo(widget.tasks.date.toString());
-          ref.read(timeProvider.notifier).foo(widget.tasks.time.toString());
-          
+          .read(selectionBtnProvider.notifier)
+          .onInitialState(widget.tasks.importance ?? '');
+      ref.read(dateProvider.notifier).foo(widget.tasks.date.toString());
+      ref.read(timeProvider.notifier).foo(widget.tasks.time.toString());
     });
-
   }
 
   @override
@@ -132,8 +130,8 @@ class _AddTaskState extends ConsumerState<UpdateTask>
                       ),
                       Consumer(
                         builder: (context, refx, child) {
-                          var selection= refx.watch(selectionBtnProvider);
-                          var color= refx.watch(nonSelectionErrorProvider);
+                          var selection = refx.watch(selectionBtnProvider);
+                          var color = refx.watch(nonSelectionErrorProvider);
                           return Wrap(
                             spacing: 10,
                             children:
@@ -148,17 +146,17 @@ class _AddTaskState extends ConsumerState<UpdateTask>
                                       label: Center(
                                         child: Text(
                                           priority,
-                                          style: TextStyle(
-                                            color: Colors.white
-                                          ),
+                                          style: TextStyle(color: Colors.white),
                                         ),
                                       ),
-                                      selected:
-                                         selection ==
-                                          priority,
+                                      selected: selection == priority,
                                       onSelected: (bool selected) {
-                                        refx.invalidate(nonSelectionErrorProvider);
-                                       refx.read(selectionBtnProvider.notifier).onSelect(selected, priority);
+                                        refx.invalidate(
+                                          nonSelectionErrorProvider,
+                                        );
+                                        refx
+                                            .read(selectionBtnProvider.notifier)
+                                            .onSelect(selected, priority);
                                       },
                                     ),
                                   );

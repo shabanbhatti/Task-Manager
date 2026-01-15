@@ -372,7 +372,7 @@ class _UserDetailPageState extends ConsumerState<UserDetailPage>
                                 ),
                                 inactiveThumbColor: Colors.white,
                                 inactiveTrackColor: Colors.grey.withAlpha(150),
-                                activeColor: Colors.white,
+                                activeThumbColor: Colors.white,
                                 activeTrackColor: Colors.orange,
                                 value: ref.watch(notiSwitcherProvider),
                                 onChanged: (value) {
