@@ -1,16 +1,29 @@
-# task_manager_project
+# Task Manager
 
-A new Flutter project.
+**Task Manager** is a modern **productivity app** for **iOS and Android**, built with **Flutter**, following **MVVM architecture** and **Riverpod state management**. It helps users efficiently **create, manage, and organize daily tasks** with **smart reminders**, ensuring no task is ever missed.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+- ✅ **Task Management:** Create, edit, and delete tasks  
+- ⏰ **Smart Reminders:** Powered by **Flutter Local Notifications**  
+- 🗄 **Secure Storage:** Tasks and user info stored locally using **SQLite (Sqflite)**  
+- 🌙 **Theme Support:** Dark, Light, and System themes with persistence via **Shared Preferences**  
+- 📱 **Responsive UI/UX:** Fully adaptive design with smooth **animations and transitions**  
+- ⚡ **Optimized Architecture:** MVVM + Riverpod for scalable and maintainable code  
+- 🔒 **User Details:** Stores name, occupation, profile image, and other identity info securely  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Video Demo
+
+*Add screenshots or GIFs here for a visual demo.*
+
+---
+
+## Installation
+
+1. Clone the repository:  
+```bash
+git clone <your-repo-url>
