@@ -64,12 +64,11 @@ class _UpdateTaskSliverAppBarState extends State<UpdateTaskSliverAppBar> {
                     // -----------------TITLE CONTROLLER-------------
                     Padding(
                       padding: const EdgeInsets.only(top: 50),
-                      child: CustomTextfieldWidget(
+                      child: DateTimeTextFormField(
                         controller: widget.titleController,
-                        globalKey: widget.titleFormKey,
+                        myKey: widget.titleFormKey,
                         title: 'Title',
-                        focusNode: FocusNode(),
-                        onFieldSubmitted: (p0) => '',
+                        isEnable: true,
                       ),
                     ),
                     // -----------------DATE CONTROLLER-------------

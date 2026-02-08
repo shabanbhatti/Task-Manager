@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager_project/Pages/splash%20page/controllers/splash_animated_riverpod.dart';
 
-
 class PageviewContainer extends StatelessWidget {
   const PageviewContainer({
     super.key,
@@ -183,7 +182,14 @@ class PageviewContainer extends StatelessWidget {
               pageTitle,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 35,
+                shadows: [
+                  BoxShadow(
+                    color: Colors.black,
+                    blurRadius: 5,
+                    offset: Offset(0, 0),
+                  ),
+                ],
+                fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
             ),

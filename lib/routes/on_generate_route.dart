@@ -5,6 +5,7 @@ import 'package:task_manager_project/Pages/Decide%20page/decide_page.dart';
 import 'package:task_manager_project/Pages/View%20task%20page/view_task_page.dart';
 import 'package:task_manager_project/Pages/add%20task%20page/add_task_page.dart';
 import 'package:task_manager_project/Pages/pending%20tasks%20page/pending_tasks_page.dart';
+import 'package:task_manager_project/Pages/search%20tasks%20page/search_tasks_page.dart';
 import 'package:task_manager_project/Pages/splash%20page/splash_page.dart';
 import 'package:task_manager_project/Pages/update%20task%20page/update_task_page.dart';
 import 'package:task_manager_project/Pages/completed%20tasks%20page/completed_tasks_page.dart';
@@ -18,7 +19,7 @@ import 'package:task_manager_project/Pages/Intro%20Page/intro_page.dart';
 Route<dynamic> onGenerateRoute(RouteSettings rs) {
   switch (rs.name) {
     case DecidePage.pageName:
-      return MaterialPageRoute(builder: (context) => DecidePage());
+      return MaterialPageRoute(builder: (context) => const DecidePage());
     case SplashPage.pageName:
       return MaterialPageRoute(
         builder: (context) => const SplashPage(),
@@ -34,10 +35,10 @@ Route<dynamic> onGenerateRoute(RouteSettings rs) {
         builder: (context) => const MainRootPage(),
         settings: rs,
       );
-    case UserDetailPage.pageName:
+    case ProfilePage.pageName:
       return PageRouteBuilder(
         pageBuilder:
-            (context, animation, secondaryAnimation) => const UserDetailPage(),
+            (context, animation, secondaryAnimation) => const ProfilePage(),
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder:
@@ -69,11 +70,11 @@ Route<dynamic> onGenerateRoute(RouteSettings rs) {
 
     case ViewTaskPage.pageName:
       return MaterialPageRoute(
-        builder: (context){
-          Map<String,dynamic> map= rs.arguments as Map<String, dynamic>;
+        builder: (context) {
+          Map<String, dynamic> map = rs.arguments as Map<String, dynamic>;
           Tasks tasks = map['tasks'] as Tasks;
-          bool isFromComplete= map['isFromComplete'] as bool;
-          return ViewTaskPage(tasks: tasks, isViewCompletePage: isFromComplete,);
+          bool isFromComplete = map['isFromComplete'] as bool;
+          return ViewTaskPage(tasks: tasks, isViewCompletePage: isFromComplete);
         },
         settings: rs,
       );
@@ -83,16 +84,16 @@ Route<dynamic> onGenerateRoute(RouteSettings rs) {
         settings: rs,
       );
 
-    case CompletedTasksPage.pageName:
+    case SearchPage.pageName:
+      return CupertinoPageRoute(builder: (context) => const SearchPage());
+
+    case PendingTasksPage.pageName:
       return CupertinoPageRoute(
-        builder: (context) => const CompletedTasksPage(),
+        builder:
+            (context) =>
+                PendingTasksPage(isAHomePendingPage: rs.arguments as bool),
       );
 
-       case PendingTasksPage.pageName:
-      return CupertinoPageRoute(
-        builder: (context) =>  PendingTasksPage(isAHomePendingPage: rs.arguments as bool),
-      );
-     
     default:
       return MaterialPageRoute(
         builder: (context) => const IntroPage(),

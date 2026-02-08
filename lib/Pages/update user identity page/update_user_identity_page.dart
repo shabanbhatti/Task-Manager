@@ -5,19 +5,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager_project/Pages/update%20user%20identity%20page/widgets/update_user_identity_btn.dart';
 import 'package:task_manager_project/controllers/selection%20btn%20controller/non_selection_error_color_controller.dart';
 import 'package:task_manager_project/controllers/selection%20btn%20controller/selection_btn_controller.dart';
+import 'package:task_manager_project/controllers/user_db_controller.dart';
 import 'package:task_manager_project/services/database_service.dart';
 import 'package:task_manager_project/widgets/gradients_background_appbar_widget.dart';
 import 'package:task_manager_project/widgets/text%20field%20widgets/custom_textfield_widget.dart';
 
-class UpdateButton extends StatefulWidget {
+class UpdateButton extends ConsumerStatefulWidget {
   const UpdateButton({super.key});
   static const pageName = '/update_buttonn';
 
   @override
-  State<UpdateButton> createState() => _UpdateButtonState();
+  ConsumerState<UpdateButton> createState() => _UpdateButtonState();
 }
 
-class _UpdateButtonState extends State<UpdateButton>
+class _UpdateButtonState extends ConsumerState<UpdateButton>
     with SingleTickerProviderStateMixin {
   final nameFocusNode = FocusNode();
 
@@ -55,7 +56,7 @@ class _UpdateButtonState extends State<UpdateButton>
 
     controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
     );
 
     scale = Tween<Offset>(
@@ -64,6 +65,9 @@ class _UpdateButtonState extends State<UpdateButton>
     ).animate(controller);
 
     controller.forward();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ref.read(userDatabaseProvider.notifier).fetchUser();
+    });
   }
 
   @override
@@ -79,13 +83,25 @@ class _UpdateButtonState extends State<UpdateButton>
   @override
   Widget build(BuildContext context) {
     print('Updated Build called');
+    ref.listen(userDatabaseProvider, (previous, next) {
+      if (next is LoadedUserSuccessfuly) {
+        nameController.text = next.user.userName ?? '';
+        nicknameController.text = next.user.nickName ?? '';
+        occupationController.text = next.user.occupation ?? '';
+        ageController.text = next.user.age ?? '';
+        ref
+            .read(selectionBtnProvider.notifier)
+            .onSelect(true, next.user.gender ?? '');
+      }
+    });
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(CupertinoIcons.back, color: Colors.white),
+          icon: const Icon(CupertinoIcons.back, color: Colors.white),
         ),
         flexibleSpace: FlexibleSpaceBar(
           background: const GradientsBackgroundAppbarWidget(),
@@ -101,13 +117,13 @@ class _UpdateButtonState extends State<UpdateButton>
         child: SlideTransition(
           position: scale,
           child: SingleChildScrollView(
-            physics: ClampingScrollPhysics(),
+            physics: const ClampingScrollPhysics(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 50),
+                  padding: const EdgeInsets.only(top: 10),
                   child: CustomTextfieldWidget(
                     focusNode: nameFocusNode,
                     controller: nameController,
@@ -118,7 +134,7 @@ class _UpdateButtonState extends State<UpdateButton>
                     title: 'Name',
                   ),
                 ),
-                SizedBox(height: 50),
+                const SizedBox(height: 15),
 
                 CustomTextfieldWidget(
                   focusNode: nicknameFocusNode,
@@ -130,7 +146,7 @@ class _UpdateButtonState extends State<UpdateButton>
                   title: 'Nickname',
                 ),
 
-                SizedBox(height: 30),
+                const SizedBox(height: 15),
 
                 CustomTextfieldWidget(
                   focusNode: occupationFocusNode,
@@ -142,7 +158,7 @@ class _UpdateButtonState extends State<UpdateButton>
                   title: 'Occupation',
                 ),
 
-                SizedBox(height: 30),
+                const SizedBox(height: 15),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
@@ -188,7 +204,7 @@ class _UpdateButtonState extends State<UpdateButton>
                         ),
                       ),
                     ),
-                    Spacer(flex: 1),
+                    const Spacer(flex: 1),
                     Expanded(
                       flex: 7,
                       child: Consumer(
@@ -225,31 +241,23 @@ class _UpdateButtonState extends State<UpdateButton>
                     ),
                   ],
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 15),
                 Padding(
-                  padding: EdgeInsets.all(10),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      mqSize = Size(
-                        constraints.maxWidth,
-                        constraints.maxHeight,
-                      );
-                      return SizedBox(
-                        width: mqSize.width * 0.9,
-                        height: 45,
-                        child: UpdateUserIdentityBtn(
-                          db: db!,
-                          nicknameController: nicknameController,
-                          ageController: ageController,
-                          nameController: nameController,
-                          occupationController: occupationController,
-                          ageKey: ageKey,
-                          nameKey: nameKey,
-                          nicknameKey: nicknameKey,
-                          occupationKey: occupationKey,
-                        ),
-                      );
-                    },
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 45,
+                    child: UpdateUserIdentityBtn(
+                      db: db!,
+                      nicknameController: nicknameController,
+                      ageController: ageController,
+                      nameController: nameController,
+                      occupationController: occupationController,
+                      ageKey: ageKey,
+                      nameKey: nameKey,
+                      nicknameKey: nicknameKey,
+                      occupationKey: occupationKey,
+                    ),
                   ),
                 ),
               ],

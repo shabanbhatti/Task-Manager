@@ -11,24 +11,24 @@ class NotiSwitcherStateNotifier extends StateNotifier<bool> {
   NotiSwitcherStateNotifier() : super(true);
   final notification = NotificationService();
 
-Future<void> load()async{
+  Future<void> load() async {
+    var isSwitchOn =
+        await SharedPrefService.getNullBool(
+          SharedPrefService.notificationSwitchKEY,
+        ) ??
+        true;
 
-var isSwitchOn=await SharedPrefService.getBool(SharedPrefService.notificationSwitchKEY);
-
-if (isSwitchOn) {
-  state=true;
-}else{
-  state= false;
-}
-
-}
-
+    if (isSwitchOn) {
+      state = true;
+    } else {
+      state = false;
+    }
+  }
 
   Future<void> onChanged(bool value) async {
     state = value;
 
-    if (value ) {
-
+    if (value) {
       notification.scheduleNotification(
         id: DateTime.now().microsecond,
         title: 'Notification enabled',
@@ -39,15 +39,15 @@ if (isSwitchOn) {
         priority: 'High',
       );
 
-       SharedPrefService.setBool(SharedPrefService.notificationSwitchKEY, value);
+      SharedPrefService.setBool(SharedPrefService.notificationSwitchKEY, value);
     } else {
       notification.showNotification(
         title: 'Notification disabled',
         body:
             "Notifications have been turned off. You will no longer receive alerts.",
       );
-     await notification.notification.cancelAll();
-     SharedPrefService.setBool(SharedPrefService.notificationSwitchKEY, value);
+      await notification.cancelAllNotifications();
+      SharedPrefService.setBool(SharedPrefService.notificationSwitchKEY, value);
     }
   }
 }

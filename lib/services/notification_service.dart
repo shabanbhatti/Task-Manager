@@ -5,101 +5,112 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
-  var notification = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _notificationPlugin =
+      FlutterLocalNotificationsPlugin();
 
-  bool isTrue = false;
-
-  bool get isInitialized => isTrue;
-
-  Future<void> initializeNotification() async {
-    if (isTrue) return;
-
+  Future<void> initialize() async {
     tz.initializeTimeZones();
+    final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
 
-    final timeZone = await FlutterTimezone.getLocalTimezone();
-    print(timeZone);
-    tz.setLocalLocation(tz.getLocation(timeZone));
+    final androidPlugin =
+        _notificationPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+    await androidPlugin?.requestExactAlarmsPermission();
 
-    var initSetting = const InitializationSettings(
-      iOS: DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestSoundPermission: true,
-        requestBadgePermission: true,
-      ),
-      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const DarwinInitializationSettings iosSettings =
+        DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
+
+    const InitializationSettings initSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
     );
 
-    await notification.initialize(initSetting);
+    await _notificationPlugin.initialize(initSettings);
   }
 
-  Future<NotificationDetails> notificationDetail({
-    required Priority priority,
-  }) async {
+  NotificationDetails _notificationDetails({required Priority priority}) {
     return NotificationDetails(
       android: AndroidNotificationDetails(
-        'device_noti_channel.id',
-        'Alert notification',
-        priority: priority,
+        'task_channel_id',
+        'Task Notifications',
+        channelDescription: 'Channel for task reminders',
         importance: Importance.max,
+        priority: priority,
         color: Colors.orange,
         playSound: true,
       ),
-      iOS: DarwinNotificationDetails(),
+      iOS: const DarwinNotificationDetails(),
     );
   }
 
   Future<void> showNotification({
     required String title,
     required String body,
+    Priority priority = Priority.max,
   }) async {
-    return await notification.show(
+    await _notificationPlugin.show(
       DateTime.now().microsecond,
       title,
       body,
-      await notificationDetail(priority: Priority.max),
+      _notificationDetails(priority: priority),
     );
   }
 
   Future<void> scheduleNotification({
-
+    required int id,
     required String title,
     required String body,
     required int hour,
     required int min,
-    required int id,
     int? sec,
     int? year,
     int? month,
     int? day,
     required String priority,
   }) async {
-
-    print('$year $month $day');
-    var now = tz.TZDateTime.now(tz.local);
-    var scheduleTime = tz.TZDateTime(
+    final now = tz.TZDateTime.now(tz.local);
+    final scheduleTime = tz.TZDateTime(
       tz.local,
-     year?? now.year,
-     month?? now.month,
-      day?? now.day,
+      year ?? now.year,
+      month ?? now.month,
+      day ?? now.day,
       hour,
       min,
-      sec??now.second
+      sec ?? 0,
     );
 
-    return notification.zonedSchedule(
+    await _notificationPlugin.zonedSchedule(
       id,
       title,
       body,
       scheduleTime,
-      await notificationDetail(
-        priority: priority == 'High' ? Priority.high : Priority.min,
+      _notificationDetails(
+        priority:
+            priority.toLowerCase() == 'high' ? Priority.high : Priority.min,
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time
+      // uiLocalNotificationDateInterpretation:
+      //     UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+      payload: 'task_payload',
     );
   }
 
-   Future<void> cancelNotificationById(int id) async {
-    await notification.cancel(id);
+  Future<void> cancelNotificationById(int id) async {
+    await _notificationPlugin.cancel(id);
+  }
+
+  Future<void> cancelAllNotifications() async {
+    await _notificationPlugin.cancelAll();
   }
 }

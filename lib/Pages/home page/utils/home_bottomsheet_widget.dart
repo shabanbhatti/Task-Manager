@@ -135,8 +135,8 @@ class _ShowBottomSheetWidgetsState extends State<ShowBottomSheetWidgets> {
                     flex: 9,
                     child: Consumer(
                       builder: (context, refx, child) {
-                        var selection= refx.watch(selectionBtnProvider);
-                        var color= refx.watch(nonSelectionErrorProvider);
+                        var selection = refx.watch(selectionBtnProvider);
+                        var color = refx.watch(nonSelectionErrorProvider);
                         return Wrap(
                           spacing: 10,
                           children:
@@ -151,14 +151,16 @@ class _ShowBottomSheetWidgetsState extends State<ShowBottomSheetWidgets> {
                                     backgroundColor: color,
                                     label: Text(
                                       gender,
-                                      style: TextStyle(
-                                        color:Colors.white
-                                      ),
+                                      style: TextStyle(color: Colors.white),
                                     ),
-                                    selected:selection==gender,
+                                    selected: selection == gender,
                                     onSelected: (bool selected) {
-                                      refx.invalidate(nonSelectionErrorProvider);
-                                      refx.read(selectionBtnProvider.notifier).onSelect(selected, gender);
+                                      refx.invalidate(
+                                        nonSelectionErrorProvider,
+                                      );
+                                      refx
+                                          .read(selectionBtnProvider.notifier)
+                                          .onSelect(selected, gender);
                                       // refx
                                       //     .read(selectionBtnProvider.notifier)
                                       //     .onSelected(selected, gender);
@@ -173,66 +175,51 @@ class _ShowBottomSheetWidgetsState extends State<ShowBottomSheetWidgets> {
                 ],
               ),
               Padding(
-                padding: EdgeInsets.all(10),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    var mqSize = Size(
-                      constraints.maxWidth,
-                      constraints.maxHeight,
-                    );
-                    return SizedBox(
-                      width: mqSize.width * 0.9,
-                      child: Consumer(
-                        builder:
-                            (context, ref, child) => CustomBtn(
-                              onTap: () async {
-                                var isNameValidate =
-                                    nameKey.currentState!.validate();
-                                var isNicknameValidate =
-                                    nicknameKey.currentState!.validate();
-                                var isAgeValidate =
-                                    ageKey.currentState!.validate();
-                                var isOccupationValidate =
-                                    occupationKey.currentState!.validate();
-                                if (isNameValidate &&
-                                    isNicknameValidate &&
-                                    isAgeValidate &&
-                                    isOccupationValidate &&
-                                    ref.watch(selectionBtnProvider) != '') {
-                                  SharedPrefService.setBool(
-                                    SharedPrefService.isUserIdentifiedKEY,
-                                    true,
-                                  );
-                                  ref
-                                      .read(userDatabaseProvider.notifier)
-                                      .insertUser(
-                                        User(
-                                          nickName: nicknameController.text,
-                                          age: ageController.text,
-                                          gender: ref.read(
-                                            selectionBtnProvider,
-                                          ),
-                                          userName: nameController.text,
-                                          occupation: occupationController.text,
-                                        ),
-                                      )
-                                      .then((value) {
-                                        Navigator.pop(context);
-                                      });
-                                } else {
-                                  if (ref.watch(selectionBtnProvider) == '') {
-                                    var value= ref.watch(selectionBtnProvider);
-                                    ref
-                                        .read(
-                                          nonSelectionErrorProvider.notifier).onSelect(value);
-                                  }
-                                }
-                              },
-                              text: 'Save',
-                            ),
+                padding: EdgeInsetsGeometry.symmetric(vertical: 10),
+                child: Consumer(
+                  builder:
+                      (context, ref, child) => CustomBtn(
+                        onTap: () async {
+                          var isNameValidate = nameKey.currentState!.validate();
+                          var isNicknameValidate =
+                              nicknameKey.currentState!.validate();
+                          var isAgeValidate = ageKey.currentState!.validate();
+                          var isOccupationValidate =
+                              occupationKey.currentState!.validate();
+                          if (isNameValidate &&
+                              isNicknameValidate &&
+                              isAgeValidate &&
+                              isOccupationValidate &&
+                              ref.watch(selectionBtnProvider) != '') {
+                            SharedPrefService.setBool(
+                              SharedPrefService.isUserIdentifiedKEY,
+                              true,
+                            );
+                            ref
+                                .read(userDatabaseProvider.notifier)
+                                .insertUser(
+                                  User(
+                                    nickName: nicknameController.text,
+                                    age: ageController.text,
+                                    gender: ref.read(selectionBtnProvider),
+                                    userName: nameController.text,
+                                    occupation: occupationController.text,
+                                  ),
+                                )
+                                .then((value) {
+                                  Navigator.pop(context);
+                                });
+                          } else {
+                            if (ref.watch(selectionBtnProvider) == '') {
+                              var value = ref.watch(selectionBtnProvider);
+                              ref
+                                  .read(nonSelectionErrorProvider.notifier)
+                                  .onSelect(value);
+                            }
+                          }
+                        },
+                        text: 'Save',
                       ),
-                    );
-                  },
                 ),
               ),
             ],

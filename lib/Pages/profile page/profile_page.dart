@@ -15,16 +15,16 @@ import 'package:task_manager_project/utils/dialog%20boxes/clear_dialog_box.dart'
 import 'package:task_manager_project/utils/show%20model%20bottom%20sheets/view_or_set_img_model_bottom_sheet.dart';
 import 'package:task_manager_project/widgets/gradients_background_appbar_widget.dart';
 
-class UserDetailPage extends ConsumerStatefulWidget {
-  const UserDetailPage({super.key});
+class ProfilePage extends ConsumerStatefulWidget {
+  const ProfilePage({super.key});
 
   static const pageName = '/user_detail';
 
   @override
-  ConsumerState<UserDetailPage> createState() => _UserDetailPageState();
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _UserDetailPageState extends ConsumerState<UserDetailPage>
+class _ProfilePageState extends ConsumerState<ProfilePage>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
 
@@ -58,15 +58,16 @@ class _UserDetailPageState extends ConsumerState<UserDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    print('User detail build called');
+    print('Profile page build called');
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(CupertinoIcons.back, color: Colors.white),
+          icon: const Icon(CupertinoIcons.back, color: Colors.white),
         ),
+
         flexibleSpace: FlexibleSpaceBar(
           background: const GradientsBackgroundAppbarWidget(),
           centerTitle: true,
@@ -78,7 +79,7 @@ class _UserDetailPageState extends ConsumerState<UserDetailPage>
       ),
       body: SafeArea(
         bottom: true,
-        minimum: EdgeInsets.all(10),
+
         child: SlideTransition(
           position: scale,
           child: SingleChildScrollView(
@@ -135,13 +136,11 @@ class _UserDetailPageState extends ConsumerState<UserDetailPage>
                                               child: switch (ref.watch(
                                                 userDatabaseProvider,
                                               )) {
-                                                InitialState() => Image.asset(
-                                                  loadingImgPath,
-                                                ),
-                                                LoadingState() => Image.asset(
-                                                  loadingImgPath,
-                                                ),
-                                                LoadedSuccessfuly(
+                                                InitialUserState() =>
+                                                  Image.asset(loadingImgPath),
+                                                LoadingUserState() =>
+                                                  Image.asset(loadingImgPath),
+                                                LoadedUserSuccessfuly(
                                                   user: var user,
                                                 ) =>
                                                   (user.imgPath == null)
@@ -153,11 +152,13 @@ class _UserDetailPageState extends ConsumerState<UserDetailPage>
                                                         height: 300,
                                                         fit: BoxFit.fitHeight,
                                                       ),
-                                                ErrorState(error: var error) =>
+                                                ErrorUserState(
+                                                  error: var error,
+                                                ) =>
                                                   Image.asset(
                                                     cameraIconImgPath,
                                                   ),
-                                                EmptyState() => Image.asset(
+                                                EmptyUserState() => Image.asset(
                                                   cameraIconImgPath,
                                                 ),
                                               },
@@ -191,28 +192,28 @@ class _UserDetailPageState extends ConsumerState<UserDetailPage>
                                 backgroundImage: switch (ref.watch(
                                   userDatabaseProvider,
                                 )) {
-                                  InitialState() => const AssetImage(
+                                  InitialUserState() => const AssetImage(
                                     cameraIconImgPath,
                                   ),
-                                  LoadingState() => const AssetImage(
+                                  LoadingUserState() => const AssetImage(
                                     loadingImgPath,
                                   ),
-                                  LoadedSuccessfuly(user: var user) =>
+                                  LoadedUserSuccessfuly(user: var user) =>
                                     (user.imgPath == null)
                                         ? AssetImage(cameraIconImgPath)
                                         : FileImage(File(user.imgPath!)),
-                                  ErrorState(error: var error) =>
+                                  ErrorUserState(error: var error) =>
                                     const AssetImage(cameraIconImgPath),
-                                  EmptyState() => const AssetImage(
+                                  EmptyUserState() => const AssetImage(
                                     cameraIconImgPath,
                                   ),
                                 },
                                 child:
                                     (ref.watch(userDatabaseProvider) ==
-                                            InitialState())
+                                            InitialUserState())
                                         ? Icon(CupertinoIcons.camera)
                                         : (ref.watch(userDatabaseProvider) ==
-                                            LoadingState())
+                                            LoadingUserState())
                                         ? CupertinoActivityIndicator()
                                         : null,
                               ),
@@ -223,20 +224,20 @@ class _UserDetailPageState extends ConsumerState<UserDetailPage>
                 ),
 
                 Padding(
-                  padding: EdgeInsets.only(top: 30, bottom: 20),
+                  padding: EdgeInsets.only(top: 30, bottom: 0),
                   child: Consumer(
                     builder:
                         (context, ref, child) => switch (ref.watch(
                           userDatabaseProvider,
                         )) {
-                          InitialState() => const Text(
+                          InitialUserState() => const Text(
                             'No Username',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 25,
                             ),
                           ),
-                          LoadingState() => Skeletonizer(
+                          LoadingUserState() => Skeletonizer(
                             child: const Text(
                               'Username is here',
                               style: TextStyle(
@@ -245,7 +246,7 @@ class _UserDetailPageState extends ConsumerState<UserDetailPage>
                               ),
                             ),
                           ),
-                          LoadedSuccessfuly(user: var user) => Text(
+                          LoadedUserSuccessfuly(user: var user) => Text(
                             user.userName.toString(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -254,14 +255,14 @@ class _UserDetailPageState extends ConsumerState<UserDetailPage>
                               fontSize: 25,
                             ),
                           ),
-                          ErrorState(error: var error) => Text(
+                          ErrorUserState(error: var error) => Text(
                             'No Username',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 25,
                             ),
                           ),
-                          EmptyState() => Text(
+                          EmptyUserState() => Text(
                             'No Username',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -272,79 +273,112 @@ class _UserDetailPageState extends ConsumerState<UserDetailPage>
                   ),
                 ),
 
-                const Divider(),
-                SafeArea(
-                  minimum: EdgeInsets.only(right: 10, left: 10, top: 30),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        onTap: () {
-                          Navigator.of(context).pushNamed(ThemeButton.pageName);
-                        },
-                        tileColor: Colors.grey.withAlpha(100),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
+                Consumer(
+                  builder:
+                      (context, ref, child) => switch (ref.watch(
+                        userDatabaseProvider,
+                      )) {
+                        InitialUserState() => const Text(
+                          'No Occupation',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25,
                           ),
                         ),
-                        leading: Icon(Icons.light_mode),
-                        title: const Text('Theme'),
-                        trailing: Icon(Icons.arrow_forward_ios, size: 20),
-                      ),
-
-                      ListTile(
-                        onTap: () {
-                          Navigator.of(
-                            context,
-                          ).pushNamed(UpdateButton.pageName);
-                        },
-                        tileColor: Colors.grey.withAlpha(100),
-
-                        leading: Icon(Icons.refresh),
-                        title: const Text('Update identity'),
-                        trailing: Icon(Icons.arrow_forward_ios, size: 20),
-                      ),
-
-                      ListTile(
-                        onTap: () {
-                          showClearCacheDialog(context, () async {
-                            final db = Db();
-                            await db.clearAllData();
-
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('All local data cleared')),
-                            );
-                          });
-                        },
-                        tileColor: Colors.grey.withAlpha(100),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20),
-                            bottomRight: Radius.circular(20),
+                        LoadingUserState() => Skeletonizer(
+                          child: const Text(
+                            'Occupation is here',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 25,
+                            ),
                           ),
                         ),
-                        leading: Icon(Icons.delete),
-                        title: Text('Clear cache'),
-                        trailing: Icon(Icons.arrow_forward_ios, size: 20),
-                      ),
+                        LoadedUserSuccessfuly(user: var user) => Text(
+                          ' ${user.occupation ?? ''}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 130, 130, 130),
+                          ),
+                        ),
+                        ErrorUserState(error: var error) => Text(
+                          error,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25,
+                          ),
+                        ),
+                        EmptyUserState() => Text(
+                          'No Occupation',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25,
+                          ),
+                        ),
+                      },
+                ),
 
-                      Padding(
-                        padding: EdgeInsets.only(top: 30),
-                        child: ListTile(
+                Column(
+                  children: [
+                    CupertinoListSection.insetGrouped(
+                      children: [
+                        CupertinoListTile(
+                          onTap: () {
+                            Navigator.of(
+                              context,
+                            ).pushNamed(ThemeButton.pageName);
+                          },
+
+                          leading: Icon(Icons.light_mode),
+                          title: const Text('Theme'),
+                          trailing: Icon(Icons.arrow_forward_ios, size: 20),
+                        ),
+                        CupertinoListTile(
+                          onTap: () {
+                            Navigator.of(
+                              context,
+                            ).pushNamed(UpdateButton.pageName);
+                          },
+
+                          leading: Icon(Icons.refresh),
+                          title: const Text('Update identity'),
+                          trailing: Icon(Icons.arrow_forward_ios, size: 20),
+                        ),
+
+                        CupertinoListTile(
+                          onTap: () {
+                            showClearCacheDialog(context, () async {
+                              final db = Db();
+                              await db.clearAllData();
+
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('All local data cleared'),
+                                ),
+                              );
+                            });
+                          },
+
+                          leading: Icon(Icons.delete),
+                          title: Text('Clear cache'),
+                          trailing: Icon(Icons.arrow_forward_ios, size: 20),
+                        ),
+                      ],
+                      backgroundColor: Colors.transparent,
+                    ),
+
+                    CupertinoListSection.insetGrouped(
+                      backgroundColor: Colors.transparent,
+                      children: [
+                        CupertinoListTile(
                           onTap: () {
                             Navigator.of(
                               context,
                             ).pushNamed(UserInfoPage.pageName);
                           },
-                          tileColor: Colors.grey.withAlpha(100),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20),
-                            ),
-                          ),
+
                           leading: const Icon(Icons.person),
                           title: const Text('User information'),
                           trailing: const Icon(
@@ -352,39 +386,26 @@ class _UserDetailPageState extends ConsumerState<UserDetailPage>
                             size: 20,
                           ),
                         ),
-                      ),
 
-                      ListTile(
-                        tileColor: Colors.grey.withAlpha(100),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20),
-                            bottomRight: Radius.circular(20),
+                        CupertinoListTile(
+                          leading: const Icon(Icons.notifications),
+                          title: const Text('Notification'),
+                          trailing: Consumer(
+                            builder:
+                                (context, ref, child) => CupertinoSwitch(
+                                  activeTrackColor: Colors.green,
+                                  value: ref.watch(notiSwitcherProvider),
+                                  onChanged: (value) {
+                                    ref
+                                        .read(notiSwitcherProvider.notifier)
+                                        .onChanged(value);
+                                  },
+                                ),
                           ),
                         ),
-                        leading: const Icon(Icons.notifications),
-                        title: const Text('Notification'),
-                        trailing: Consumer(
-                          builder:
-                              (context, ref, child) => Switch(
-                                trackOutlineColor: WidgetStatePropertyAll(
-                                  Theme.of(context).primaryColor,
-                                ),
-                                inactiveThumbColor: Colors.white,
-                                inactiveTrackColor: Colors.grey.withAlpha(150),
-                                activeThumbColor: Colors.white,
-                                activeTrackColor: Colors.orange,
-                                value: ref.watch(notiSwitcherProvider),
-                                onChanged: (value) {
-                                  ref
-                                      .read(notiSwitcherProvider.notifier)
-                                      .onChanged(value);
-                                },
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -5,7 +5,11 @@ class DescriptionWithToggle extends ConsumerStatefulWidget {
   final String description;
   final int id;
 
-  const DescriptionWithToggle({super.key, required this.description, required this.id});
+  const DescriptionWithToggle({
+    super.key,
+    required this.description,
+    required this.id,
+  });
 
   @override
   ConsumerState<DescriptionWithToggle> createState() =>
@@ -35,7 +39,7 @@ class _DescriptionWithToggleState extends ConsumerState<DescriptionWithToggle> {
 
     textPainter.layout(maxWidth: MediaQuery.of(context).size.width - 40);
     if (textPainter.didExceedMaxLines) {
-      ref.read(showSeeMoreProvider(widget.id).notifier ).foo();
+      ref.read(showSeeMoreProvider(widget.id).notifier).foo();
     }
   }
 
@@ -53,10 +57,7 @@ class _DescriptionWithToggleState extends ConsumerState<DescriptionWithToggle> {
                     expRef.watch(expandedProvider(widget.id))
                         ? TextOverflow.visible
                         : TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
         ),
         const SizedBox(height: 8),
@@ -64,10 +65,12 @@ class _DescriptionWithToggleState extends ConsumerState<DescriptionWithToggle> {
         Consumer(
           builder:
               (context, expRef, child) =>
-                  (expRef.watch(showSeeMoreProvider(widget.id) ))
+                  (expRef.watch(showSeeMoreProvider(widget.id)))
                       ? GestureDetector(
                         onTap: () {
-                          expRef.read(expandedProvider(widget.id).notifier).toggle();
+                          expRef
+                              .read(expandedProvider(widget.id).notifier)
+                              .toggle();
                         },
                         child: Consumer(
                           builder:
@@ -91,8 +94,8 @@ class _DescriptionWithToggleState extends ConsumerState<DescriptionWithToggle> {
   }
 }
 
-final expandedProvider =
-    StateNotifierProvider.autoDispose.family<ExpandedStateNotifier, bool, int>((ref, id) {
+final expandedProvider = StateNotifierProvider.autoDispose
+    .family<ExpandedStateNotifier, bool, int>((ref, id) {
       return ExpandedStateNotifier();
     });
 
@@ -104,8 +107,8 @@ class ExpandedStateNotifier extends StateNotifier<bool> {
   }
 }
 
-final showSeeMoreProvider =
-    StateNotifierProvider.autoDispose.family<ShowSeeMore, bool, int>((ref, id) {
+final showSeeMoreProvider = StateNotifierProvider.autoDispose
+    .family<ShowSeeMore, bool, int>((ref, id) {
       return ShowSeeMore();
     });
 

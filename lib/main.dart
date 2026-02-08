@@ -16,7 +16,7 @@ void main(List<String> args) async {
   await container.read(themeByRadioProvider.notifier).getTheme();
   await container.read(userDatabaseProvider.notifier).fetchUser();
   // await container.read(tasksProvider.notifier).fetchTasks();
-  await NotificationService().initializeNotification();
+  await NotificationService().initialize();
   runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 

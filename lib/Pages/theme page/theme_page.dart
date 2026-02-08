@@ -58,7 +58,7 @@ class _ThemeButtonState extends State<ThemeButton>
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(CupertinoIcons.back, color: Colors.white),
+          icon: const Icon(CupertinoIcons.back, color: Colors.white),
         ),
         flexibleSpace: FlexibleSpaceBar(
           background: const GradientsBackgroundAppbarWidget(),
@@ -70,20 +70,13 @@ class _ThemeButtonState extends State<ThemeButton>
         ),
       ),
       body: SafeArea(
-        minimum: EdgeInsets.all(10),
+        minimum: EdgeInsets.all(0),
         child: Center(
           child: SlideTransition(
             position: scale,
-            child: Column(
+            child: CupertinoListSection.insetGrouped(
               children: [
-                ListTile(
-                  tileColor: Colors.grey.withAlpha(100),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
-                  ),
+                CupertinoListTile(
                   leading: Icon(Icons.light_mode),
                   title: const Text('Light'),
                   trailing: Consumer(
@@ -105,9 +98,7 @@ class _ThemeButtonState extends State<ThemeButton>
                   ),
                 ),
 
-                ListTile(
-                  tileColor: Colors.grey.withAlpha(100),
-
+                CupertinoListTile(
                   leading: Icon(Icons.dark_mode),
                   title: const Text('Dark'),
                   trailing: Consumer(
@@ -115,11 +106,13 @@ class _ThemeButtonState extends State<ThemeButton>
                         (context, ref, child) => Radio(
                           activeColor: Colors.orange,
                           value: darkValue,
+                          // ignore: deprecated_member_use
                           groupValue: ref.watch(
                             themeByRadioProvider.select(
                               (value) => value.groupValue,
                             ),
                           ),
+
                           onChanged: (value) {
                             ref
                                 .read(themeByRadioProvider.notifier)
@@ -129,14 +122,7 @@ class _ThemeButtonState extends State<ThemeButton>
                   ),
                 ),
 
-                ListTile(
-                  tileColor: Colors.grey.withAlpha(100),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
-                  ),
+                CupertinoListTile(
                   leading: Icon(Icons.phone_android),
                   title: Text('System'),
                   trailing: Consumer(

@@ -21,7 +21,7 @@ ThemeData darkMode = ThemeData(
 
 ThemeData lightMode = ThemeData(
   brightness: Brightness.light,
-  scaffoldBackgroundColor: Colors.white,
+  scaffoldBackgroundColor: const Color.fromARGB(255, 243, 243, 243),
   primaryColor: Colors.black,
   cardTheme: CardThemeData(
     color: Colors.white,

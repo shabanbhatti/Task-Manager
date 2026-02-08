@@ -32,54 +32,86 @@ class _FirstPageState extends ConsumerState<IntroPage> {
   Widget build(BuildContext context) {
     print('First page Build Caled');
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 100),
-            Consumer(
-              builder:
-                  (context, firstPageRef, child) => AnimatedSlide(
-                    offset: Offset(0, firstPageRef.watch(introPageProvider)),
-                    duration: const Duration(milliseconds: 500),
-                    child: Container(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      height: 200,
-                      width: 200,
-                      decoration: const ShapeDecoration(
-                        shape: CircleBorder(),
-                        shadows: [
-                          BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 6,
-                            spreadRadius: 5,
-                            offset: Offset(0, 0),
+      body: CustomScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        slivers: [
+          SliverFillRemaining(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 50),
+                  Consumer(
+                    builder:
+                        (context, firstPageRef, child) => AnimatedSlide(
+                          offset: Offset(
+                            0,
+                            firstPageRef.watch(introPageProvider),
                           ),
-                        ],
-                        gradient: LinearGradient(
-                          colors: [Colors.red, Colors.orange],
-                        ),
-                      ),
+                          duration: const Duration(milliseconds: 500),
+                          child: Container(
+                            // clipBehavior: Clip.antiAliasWithSaveLayer,
+                            height: 170,
+                            width: 170,
 
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        appLogo,
-                        fit: BoxFit.fitHeight,
-                        height: 150,
-                      ),
+                            // decoration: BoxDecoration(
+                            //   boxShadow: [
+                            //     BoxShadow(
+                            //       color: Colors.black.withAlpha(100),
+                            //       blurRadius: 5,
+                            //       offset: Offset(0, 0),
+                            //     ),
+                            //   ],
+                            //   borderRadius: BorderRadius.all(
+                            //     Radius.circular(20),
+                            //   ),
+                            //   gradient: LinearGradient(
+                            //     colors: [Colors.red, Colors.orange],
+                            //   ),
+                            // ),
+                            alignment: Alignment.center,
+                            child: Image.asset(
+                              appLogo,
+                              fit: BoxFit.fitHeight,
+                              height: 150,
+                            ),
+                          ),
+                        ),
+                  ),
+                  const SizedBox(height: 30),
+                  Text(
+                    'TASK MAᑎAGER',
+
+                    style: TextStyle(
+                      shadows: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(100),
+                          blurRadius: 5,
+                          offset: Offset(0, 0),
+                          blurStyle: BlurStyle.outer,
+                        ),
+                      ],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25,
                     ),
                   ),
-            ),
-
-            Padding(
-              padding: EdgeInsets.only(top: 250),
-              child: const CupertinoActivityIndicator(
-                radius: 15,
-                color: Colors.deepOrange,
+                  // ᏖᏗᏕᏦ ᎷᏗᏁᏗᎶᏋᏒ
+                  const SizedBox(height: 40),
+                  Padding(
+                    padding: const EdgeInsetsGeometry.symmetric(
+                      horizontal: 100,
+                    ),
+                    child: LinearProgressIndicator(
+                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                      backgroundColor: Colors.grey.withAlpha(100),
+                      color: Colors.deepOrange,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

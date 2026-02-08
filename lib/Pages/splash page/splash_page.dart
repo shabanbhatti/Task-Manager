@@ -8,7 +8,6 @@ import 'package:task_manager_project/Pages/splash%20page/controllers/splash_page
 import 'package:task_manager_project/Pages/splash%20page/widgets/splash_designing_circle_dots_widget.dart';
 import 'package:task_manager_project/services/shared_pref_service.dart';
 
-
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
   static const pageName = '/splash_page';
@@ -33,7 +32,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     super.dispose();
   }
 
-  late var mqSize;
+  // late var mqSize;
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +90,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
               ),
 
               Align(
-                alignment: Alignment(0, 0.65),
+                alignment: const Alignment(0, 0.65),
                 child: SizedBox(
                   height: 50,
                   width: 130,
@@ -99,12 +98,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                     builder:
                         (context, conRef, child) => OutlinedButton(
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(width: 1),
+                            side: BorderSide(width: 0.5, color: Colors.grey),
                             backgroundColor: Colors.white.withAlpha(100),
-                            shape: BeveledRectangleBorder(
-                              side: BorderSide(color: Colors.white),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
                           ),
                           onPressed: () async {
                             final currentIndex = conRef.watch(
@@ -118,8 +113,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                               notifier.pageviewNavigate();
                               controller.animateToPage(
                                 currentIndex + 1,
-                                duration: Duration(milliseconds: 500),
-                                curve: Curves.slowMiddle,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInExpo,
                               );
                             } else {
                               SharedPrefService.setBool(

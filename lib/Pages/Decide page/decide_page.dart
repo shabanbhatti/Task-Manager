@@ -6,36 +6,32 @@ import 'package:task_manager_project/services/shared_pref_service.dart';
 
 class DecidePage extends ConsumerStatefulWidget {
   const DecidePage({super.key});
-static const pageName= '/';
+  static const pageName = '/';
 
   @override
   ConsumerState<DecidePage> createState() => _DecidePageState();
 }
 
 class _DecidePageState extends ConsumerState<DecidePage> {
-
-@override
+  @override
   void initState() {
     super.initState();
 
-    Future.microtask(() =>whichPage(),);
-
+    Future.microtask(() => whichPage());
   }
 
+  void whichPage() async {
+    var isOpened = await SharedPrefService.getBool(
+      SharedPrefService.isAppOpenedKEY,
+    );
 
-  void whichPage()async{
-
-var isOpened= await SharedPrefService.getBool(SharedPrefService.isAppOpenedKEY);
-
-        if (mounted) {
-            if (isOpened==false) {
-            
-            Navigator.of(context).pushReplacementNamed(SplashPage.pageName);
-          }else{
-            Navigator.of(context).pushReplacementNamed(IntroPage.pageName);
-          }
-
-        }
+    if (mounted) {
+      if (isOpened == false) {
+        Navigator.of(context).pushReplacementNamed(SplashPage.pageName);
+      } else {
+        Navigator.of(context).pushReplacementNamed(IntroPage.pageName);
+      }
+    }
   }
 
   @override

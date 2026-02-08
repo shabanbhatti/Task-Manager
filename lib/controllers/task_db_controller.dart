@@ -11,11 +11,12 @@ final tasksProvider = StateNotifierProvider<TasksStateNotifier, TasksState>((
 
 class TasksStateNotifier extends StateNotifier<TasksState> {
   final Db db = Db();
-  TasksStateNotifier() : super(InitialState());
+  TasksStateNotifier() : super(InitialTaskState());
 
   Future<bool> fetchTasks() async {
     try {
-      state = LoadingState();
+      state = LoadingTaskState();
+
       var data = await db.fetchTasks();
 
       var completedList =
@@ -23,26 +24,27 @@ class TasksStateNotifier extends StateNotifier<TasksState> {
 
       var homeList =
           data.where((element) => element.isCompleted == false).toList();
-print(homeList);
+      print(homeList);
       if (homeList.isNotEmpty) {
-        state = LoadedSuccessfuly(
+        state = LoadedTaskSuccessfuly(
           taskList: homeList,
           completedTasks: completedList,
         );
       } else {
-        state = EmptyState();
+        state = EmptyTaskState();
       }
 
       return true;
     } catch (e) {
-      state = ErrorState(error: e.toString());
+      state = ErrorTaskState(error: e.toString());
       return false;
     }
   }
 
   Future<bool> fetchCompletedTasks() async {
     try {
-      state = LoadingState();
+      state = LoadingTaskState();
+      await Future.delayed(const Duration(seconds: 3));
       var data = await db.fetchTasks();
 
       var completedList =
@@ -52,39 +54,39 @@ print(homeList);
           data.where((element) => element.isCompleted == false).toList();
 
       if (completedList.isNotEmpty) {
-        state = LoadedSuccessfuly(
+        state = LoadedTaskSuccessfuly(
           taskList: homeList,
           completedTasks: completedList,
         );
       } else {
-        state = EmptyState();
+        state = EmptyTaskState();
       }
 
       return true;
     } catch (e) {
-      state = ErrorState(error: e.toString());
+      state = ErrorTaskState(error: e.toString());
       return false;
     }
   }
 
   Future<int> insertTask(Tasks tasks) async {
     try {
-      state = LoadingState();
+      state = LoadingTaskState();
 
-      var id= await db.insertTask(tasks);
+      var id = await db.insertTask(tasks);
 
       await fetchTasks();
 
       return id;
     } catch (e) {
-      state = ErrorState(error: e.toString());
+      state = ErrorTaskState(error: e.toString());
       return 0;
     }
   }
 
   Future<bool> updateTask(Tasks tasks) async {
     try {
-      state = LoadingState();
+      state = LoadingTaskState();
 
       var data = await db.updateTask(tasks);
 
@@ -95,44 +97,39 @@ print(homeList);
         return false;
       }
     } catch (e) {
-      state = ErrorState(error: e.toString());
+      state = ErrorTaskState(error: e.toString());
       return false;
     }
   }
 
-Future<bool> deleteTask(Tasks tasks)async{
+  Future<bool> deleteTask(Tasks tasks) async {
+    try {
+      state = LoadingTaskState();
 
-try {
-  state= LoadingState();
+      var isDeleted = await db.deleteTask(tasks);
 
-var isDeleted= await db.deleteTask(tasks);
-
-if (isDeleted) {
-  await fetchCompletedTasks();
-  await fetchTasks();
-return true;
-}else{
-  throw Exception('Not Deleted');
-}
-
-} catch (e) {
-  state= ErrorState(error: e.toString());
-  return false;
-}
-
-}
-
+      if (isDeleted) {
+        // await fetchCompletedTasks();
+        await fetchTasks();
+        return true;
+      } else {
+        throw Exception('Not Deleted');
+      }
+    } catch (e) {
+      state = ErrorTaskState(error: e.toString());
+      return false;
+    }
+  }
 
   Future<void> onChangedCheckBoxButton(bool value, Tasks task) async {
     final updatedTask = task.copyWith(isCompleted: value);
     final success = await db.updateTask(updatedTask);
 
-    if (success && state is LoadedSuccessfuly) {
-      final current = state as LoadedSuccessfuly;
+    if (success && state is LoadedTaskSuccessfuly) {
+      final current = state as LoadedTaskSuccessfuly;
 
       final allTasks = [...current.taskList, ...current.completedTasks];
 
-      print('$allTasks=========');
       final updatedList =
           allTasks.map((t) {
             return t.taskPrimaryKey == updatedTask.taskPrimaryKey
@@ -143,7 +140,7 @@ return true;
       final homeList = updatedList.where((e) => !e.isCompleted!).toList();
       final completedList = updatedList.where((e) => e.isCompleted!).toList();
 
-      state = LoadedSuccessfuly(
+      state = LoadedTaskSuccessfuly(
         taskList: homeList,
         completedTasks: completedList,
       );
@@ -155,28 +152,28 @@ sealed class TasksState {
   const TasksState();
 }
 
-class InitialState extends TasksState {
-  const InitialState();
+class InitialTaskState extends TasksState {
+  const InitialTaskState();
 }
 
-class LoadingState extends TasksState {
-  const LoadingState();
+class LoadingTaskState extends TasksState {
+  const LoadingTaskState();
 }
 
-class LoadedSuccessfuly extends TasksState {
+class LoadedTaskSuccessfuly extends TasksState {
   final List<Tasks> taskList;
   final List<Tasks> completedTasks;
-  const LoadedSuccessfuly({
+  const LoadedTaskSuccessfuly({
     required this.taskList,
     required this.completedTasks,
   });
 }
 
-class ErrorState extends TasksState {
+class ErrorTaskState extends TasksState {
   final String error;
-  const ErrorState({required this.error});
+  const ErrorTaskState({required this.error});
 }
 
-class EmptyState extends TasksState {
-  const EmptyState();
+class EmptyTaskState extends TasksState {
+  const EmptyTaskState();
 }

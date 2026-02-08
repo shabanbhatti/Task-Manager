@@ -4,21 +4,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:task_manager_project/Pages/add%20task%20page/add_task_page.dart';
 import 'package:task_manager_project/Pages/home%20page/home_page.dart';
 import 'package:task_manager_project/Pages/pending%20tasks%20page/pending_tasks_page.dart';
+import 'package:task_manager_project/controllers/task_db_controller.dart';
+import 'package:task_manager_project/controllers/user_db_controller.dart';
 import 'package:task_manager_project/services/shared_pref_service.dart';
 import 'package:task_manager_project/utils/show%20model%20bottom%20sheets/user_registration_model_bottom_sheet.dart';
 
-class MainRootPage extends StatefulWidget {
+class MainRootPage extends ConsumerStatefulWidget {
   const MainRootPage({super.key});
   static const pageName = '/home';
 
   @override
-  State<MainRootPage> createState() => _HomePageState();
+  ConsumerState<MainRootPage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<MainRootPage> {
+class _HomePageState extends ConsumerState<MainRootPage> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(tasksProvider.notifier).fetchCompletedTasks();
+      ref.read(tasksProvider.notifier).fetchTasks();
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showBottomSheetInInit();
@@ -40,8 +47,8 @@ class _HomePageState extends State<MainRootPage> {
   }
 
   List<Widget> myWidgets = const [
-    BottomBarHome(),
-    PendingTasksPage(isAHomePendingPage: false),
+    const BottomBarHome(),
+    const PendingTasksPage(isAHomePendingPage: false),
   ];
 
   @override
@@ -56,7 +63,14 @@ class _HomePageState extends State<MainRootPage> {
           elevation: 5,
 
           onPressed: () {
-            Navigator.pushNamed(context, AddTask.pageName);
+            var userState = ref.read(userDatabaseProvider);
+            if (userState is LoadedUserSuccessfuly) {
+              print('successfuly');
+              Navigator.pushNamed(context, AddTask.pageName);
+            } else {
+              print('error');
+              useregistrationModelBottomSheet(context);
+            }
           },
           backgroundColor: Colors.deepOrangeAccent,
           shape: const CircleBorder(),

@@ -10,49 +10,64 @@ class SearchSliverAppbarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
-      leading: IconButton(
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-
-        icon: const Icon(CupertinoIcons.back, color: Colors.white),
-      ),
-      expandedHeight: 150,
+      leading: SizedBox(),
+      expandedHeight: 130,
+      snap: true,
+      floating: true,
+      primary: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       flexibleSpace: GradientsBackgroundAppbarWidget(
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
+            Align(
+              child: Padding(
+                padding: EdgeInsetsGeometry.symmetric(horizontal: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Search',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        CupertinoIcons.xmark_circle,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             Padding(
-              padding: EdgeInsets.all(15),
+              padding: const EdgeInsets.all(15),
               child: Consumer(
                 builder:
-                    (context, searchWord, child) => TextField(
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 128, 128, 128),
-                      ),
+                    (context, searchWord, child) => CupertinoSearchTextField(
                       controller: controller,
+                      placeholderStyle: const TextStyle(color: Colors.grey),
+                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                      style: const TextStyle(color: Colors.grey),
+
+                      cursorColor: Colors.grey,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
                       onChanged: (value) {
                         searchWord
                             .read(searchListProvider.notifier)
                             .onChanged(value);
                       },
-
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Color.fromARGB(255, 128, 128, 128),
-                        ),
-                        hintText: 'Search',
-
-                        hintStyle: const TextStyle(
-                          color: Color.fromARGB(255, 128, 128, 128),
-                        ),
-                        fillColor: const Color.fromARGB(255, 255, 255, 255),
-                        filled: true,
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
                     ),
               ),
             ),

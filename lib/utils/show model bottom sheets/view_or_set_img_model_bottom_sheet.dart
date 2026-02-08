@@ -17,158 +17,168 @@ void viewOrSetImage(BuildContext context) {
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (context) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Consumer(
-            builder:
-                (context, ref, child) => switch (ref.watch(
-                  userDatabaseProvider,
-                )) {
-                  InitialState() => SizedBox(),
-                  LoadingState() => SizedBox(),
-                  LoadedSuccessfuly(user: var user) =>
-                    (user.imgPath != null && user.imgPath!.isNotEmpty)
-                        ? ListTile(
-                          leading: const Icon(Icons.image),
-                          title: const Text('View Image'),
-                          onTap: () {
-                            Navigator.pop(context);
-                            showCupertinoDialog(
-                              barrierDismissible: true,
+      return SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Consumer(
+              builder:
+                  (context, ref, child) => switch (ref.watch(
+                    userDatabaseProvider,
+                  )) {
+                    InitialUserState() => SizedBox(),
+                    LoadingUserState() => SizedBox(),
+                    LoadedUserSuccessfuly(user: var user) =>
+                      (user.imgPath != null && user.imgPath!.isNotEmpty)
+                          ? ListTile(
+                            leading: const Icon(Icons.image),
+                            title: const Text('View Image'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              showCupertinoDialog(
+                                barrierDismissible: true,
 
-                              context: context,
-                              builder:
-                                  (context) => AlertDialog(
-                                    backgroundColor: Colors.transparent,
+                                context: context,
+                                builder:
+                                    (context) => AlertDialog(
+                                      backgroundColor: Colors.transparent,
 
-                                    content: SizedBox(
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              IconButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                icon: Icon(Icons.close),
-                                              ),
-                                            ],
-                                          ),
-                                          InteractiveViewer(
-                                            maxScale: 10,
-                                            minScale: 0.1,
-                                            child: Container(
-                                              child: switch (ref.watch(
-                                                userDatabaseProvider,
-                                              )) {
-                                                InitialState() => Image.asset(
-                                                  'assets/images/loading.png',
+                                      content: SizedBox(
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                IconButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  icon: Icon(Icons.close),
                                                 ),
-                                                LoadingState() => Image.asset(
-                                                  'assets/images/loading.png',
-                                                ),
-                                                LoadedSuccessfuly(
-                                                  user: var user,
-                                                ) =>
-                                                  (user.imgPath!.isEmpty ||
-                                                          user.imgPath == null)
-                                                      ? Image.asset(
-                                                        'assets/images/camera.png',
-                                                      )
-                                                      : Image.file(
-                                                        File(user.imgPath!),
-                                                        height: 300,
-                                                        fit: BoxFit.fitHeight,
-                                                      ),
-                                                ErrorState(error: var error) =>
-                                                  Image.asset(
-                                                    'assets/images/camera.png',
-                                                  ),
-                                                EmptyState() => Image.asset(
-                                                  'assets/images/camera.png',
-                                                ),
-                                              },
+                                              ],
                                             ),
-                                          ),
-                                        ],
+                                            InteractiveViewer(
+                                              maxScale: 10,
+                                              minScale: 0.1,
+                                              child: Container(
+                                                child: switch (ref.watch(
+                                                  userDatabaseProvider,
+                                                )) {
+                                                  InitialUserState() =>
+                                                    Image.asset(
+                                                      'assets/images/loading.png',
+                                                    ),
+                                                  LoadingUserState() =>
+                                                    Image.asset(
+                                                      'assets/images/loading.png',
+                                                    ),
+                                                  LoadedUserSuccessfuly(
+                                                    user: var user,
+                                                  ) =>
+                                                    (user.imgPath!.isEmpty ||
+                                                            user.imgPath ==
+                                                                null)
+                                                        ? Image.asset(
+                                                          'assets/images/camera.png',
+                                                        )
+                                                        : Image.file(
+                                                          File(user.imgPath!),
+                                                          height: 300,
+                                                          fit: BoxFit.fitHeight,
+                                                        ),
+                                                  ErrorUserState(
+                                                    error: var error,
+                                                  ) =>
+                                                    Image.asset(
+                                                      'assets/images/camera.png',
+                                                    ),
+                                                  EmptyUserState() =>
+                                                    Image.asset(
+                                                      'assets/images/camera.png',
+                                                    ),
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                            );
-                          },
-                        )
-                        : SizedBox(),
-                  ErrorState(error: var error) => SizedBox(),
+                              );
+                            },
+                          )
+                          : SizedBox(),
+                    ErrorUserState(error: var error) => SizedBox(),
 
-                  EmptyState() => Text(''),
-                },
-          ),
-          Consumer(
-            builder:
-                (context, ref, child) => ListTile(
-                  leading: const Icon(Icons.add_a_photo),
-                  title: const Text('Add new profile image'),
-                  onTap: () {
-                    ref
-                        .read(circleAvatarImgProvider.notifier)
-                        .takeImage(ImageSource.gallery)
-                        .then((value) {
-                          ref.read(userDatabaseProvider.notifier).fetchUser();
-                          Navigator.pop(context);
-                        });
+                    EmptyUserState() => Text(''),
                   },
-                ),
-          ),
+            ),
+            Consumer(
+              builder:
+                  (context, ref, child) => ListTile(
+                    leading: const Icon(Icons.add_a_photo),
+                    title: const Text('Add new profile image'),
+                    onTap: () {
+                      ref
+                          .read(circleAvatarImgProvider.notifier)
+                          .takeImage(ImageSource.gallery)
+                          .then((value) {
+                            ref.read(userDatabaseProvider.notifier).fetchUser();
+                            Navigator.pop(context);
+                          });
+                    },
+                  ),
+            ),
 
-          Consumer(
-            builder:
-                (context, ref, child) => switch (ref.watch(
-                  userDatabaseProvider,
-                )) {
-                  InitialState() => SizedBox(),
-                  LoadingState() => SizedBox(),
-                  LoadedSuccessfuly(user: var user) =>
-                    (user.imgPath != null && user.imgPath!.isNotEmpty)
-                        ? ListTile(
-                          leading: const Icon(Icons.delete, color: Colors.red),
-                          title: const Text(
-                            'Delete image',
-                            style: TextStyle(color: Colors.red),
-                          ),
-                          onTap: () {
-                            
-                            final Db db = Db();
+            Consumer(
+              builder:
+                  (context, ref, child) => switch (ref.watch(
+                    userDatabaseProvider,
+                  )) {
+                    InitialUserState() => SizedBox(),
+                    LoadingUserState() => SizedBox(),
+                    LoadedUserSuccessfuly(user: var user) =>
+                      (user.imgPath != null && user.imgPath!.isNotEmpty)
+                          ? ListTile(
+                            leading: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            title: const Text(
+                              'Delete image',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            onTap: () {
+                              final Db db = Db();
 
-                            deleteDialog(context, () async {
-                              var user = await db.fetchUser();
+                              deleteDialog(context, () async {
+                                var user = await db.fetchUser();
 
-                              ref
-                                  .read(userDatabaseProvider.notifier)
-                                  .updateUser(user.copyWith(imgPath: ''))
-                                  .then((value) {
-                                    ref
-                                        .read(userDatabaseProvider.notifier)
-                                        .fetchUser();
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                  });
-                            });
-                          },
-                        )
-                        : SizedBox(),
-                  ErrorState(error: var error) => SizedBox(),
-                  EmptyState() => SizedBox(),
-                },
-          ),
-        ],
+                                ref
+                                    .read(userDatabaseProvider.notifier)
+                                    .updateUser(user.copyWith(imgPath: ''))
+                                    .then((value) {
+                                      ref
+                                          .read(userDatabaseProvider.notifier)
+                                          .fetchUser();
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    });
+                              });
+                            },
+                          )
+                          : SizedBox(),
+                    ErrorUserState(error: var error) => SizedBox(),
+                    EmptyUserState() => SizedBox(),
+                  },
+            ),
+          ],
+        ),
       );
     },
   );
