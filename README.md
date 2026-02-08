@@ -18,7 +18,7 @@
 
 ## Video Demo
 
-*Add screenshots or GIFs here for a visual demo.*
+*https://drive.google.com/file/d/10AIT_MH9UpsJwbKQTzfOEkZSpzwKQRzJ/view?usp=drivesdk*
 
 ---
 
@@ -26,4 +26,4 @@
 
 1. Clone the repository:  
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/shabanbhatti/Task-Manager.git
